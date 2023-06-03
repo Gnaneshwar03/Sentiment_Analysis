@@ -1,11 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# ## Importing Important Libraries, Functions and Corpuses
-
-# In[ ]:
-
-
+# Importing Important Libraries, Functions and Corpuses
 import re
 from textblob import TextBlob
 import matplotlib.pyplot as plt
@@ -17,11 +10,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 
 
-# ## Reading the CSV File
-
-# In[ ]:
-
-
+# Reading the CSV File
 tweet_df=pd.read_csv('tweets.csv')
 tweet_df = tweet_df.rename(columns={'message to examine': 'tweets'})
 tweet_df.head()
@@ -29,24 +18,14 @@ NoOfTerms=81
 searchTerm= 'tweets'
 
 
-# ## Cleaning Data
-
-# In[ ]:
-
+# Cleaning Data
 
 def clean_data(text):
     return ' '.join(re.sub("(@[a-zA-Z0-9]+)|([^0-9A-Za-z])|(https://[\w.]+/[\w]+)|(http://[\w.]+/[\w]+)", " ", text).split())
 
 tweet_df['cleaned_data'] = tweet_df.iloc[:,0].apply(clean_data)
 
-
-# In[ ]:
-
-
 tweet_df.head()
-
-
-# In[ ]:
 
 
 def drop_numbers(list_text):
@@ -58,17 +37,9 @@ def drop_numbers(list_text):
 
 tweet_df['cleaned_data'] = tweet_df['cleaned_data'].apply(drop_numbers)
 
-
-# In[ ]:
-
-
 tweet_df.head()
 
 
-# In[ ]:
-
-
-# changing all the words of the reviews column to lowercase letters
 def lower_case(text):
     text_words = word_tokenize(text)
     text_words_lower = [x.lower() for x in text_words]
@@ -78,14 +49,7 @@ tweet_df['cleaned_data'] = tweet_df['cleaned_data'].apply(lower_case)
 tweet_df.head()
 
 
-# In[ ]:
-
-
-import nltk
 nltk.download('wordnet')
-
-
-# In[ ]:
 
 
 lemmatizer = WordNetLemmatizer()
@@ -96,18 +60,12 @@ def lemmatise(text):
 
 tweet_df['cleaned_data'] = tweet_df['cleaned_data'].apply(lemmatise)
 
-
-# In[ ]:
-
-
 tweet_df['cleaned_data'].values
 
 
-# In[ ]:
 
-
-import nltk
 nltk.download('stopwords')
+
 def remove_stopword(text):
     text_tokens = word_tokenize(text)
     tokens = [word for word in text_tokens if not word in set(stopwords.words('english'))]
@@ -117,16 +75,10 @@ def remove_stopword(text):
 tweet_df['cleaned_data'] = tweet_df['cleaned_data'].apply(remove_stopword)
 
 
-# In[ ]:
-
-
 tweet_df['cleaned_data'].values
 
 
-# ## Finding Polarity
-
-# In[ ]:
-
+# Finding Polarity
 
 # Lets calculate the Polarity of the Reviews
 def get_polarity(text):
@@ -149,20 +101,10 @@ def get_polarity(text):
     
 tweet_df['polarity'] = tweet_df['cleaned_data'].apply(get_polarity)
 
-
-# In[ ]:
-
-
 tweet_df['polarity'].value_counts()
-
-
-# In[ ]:
-
 
 tweet_df.dtypes
 
-
-# In[ ]:
 
 
 neutral = 0
@@ -194,15 +136,9 @@ for i in range(0,70):
         snegative += 1
 
 
-# In[ ]:
-
-
-# finding average reaction
+# Finding average reaction
 polarity = polarity / NoOfTerms
 polarity
-
-
-# In[ ]:
 
 
 def percentage(part, whole):
@@ -210,10 +146,7 @@ def percentage(part, whole):
     return format(temp, '.2f')
 
 
-# In[ ]:
-
-
-# finding average of how people are reacting
+# Finding average of how people are reacting
 positive = percentage(positive, NoOfTerms)
 wpositive = percentage(wpositive, NoOfTerms)
 spositive = percentage(spositive, NoOfTerms)
@@ -223,12 +156,9 @@ snegative = percentage(snegative, NoOfTerms)
 neutral = percentage(neutral, NoOfTerms)
 
 
-# ## Report
+# Report
 
-# In[ ]:
-
-
-# printing out data
+# Printing out data
 print("How people are reacting on " + searchTerm + " by analyzing " + str(NoOfTerms) + " tweets.")
 print()
 print("-----------------------------------------------------------------------------------------")
@@ -263,11 +193,7 @@ print(str(snegative) + "% people thought it was strongly negative")
 print(str(neutral) + "% people thought it was neutral")
 
 
-# ## Visual Representation
-
-# In[ ]:
-
-
+# Visual Representation
 sizes = [positive, wpositive, spositive, neutral, negative, wnegative, snegative]
 colors = ['yellowgreen','lightgreen','darkgreen', 'gold', 'red','lightsalmon','darkred']
 labels = ['Positive [' + str(positive) + '%]', 'Weakly Positive [' + str(wpositive) + '%]',
@@ -275,20 +201,9 @@ labels = ['Positive [' + str(positive) + '%]', 'Weakly Positive [' + str(wpositi
           'Negative [' + str(negative) + '%]', 'Weakly Negative [' + str(wnegative) + '%]', 
           'Strongly Negative [' + str(snegative) + '%]']
 
-
-# In[ ]:
-
-
 plt.pie(sizes, labels = labels, colors = colors)
 plt.legend(labels, loc="best")
 plt.title('How people are reacting on ' + searchTerm + ' by analyzing ' + str(NoOfTerms) + ' Tweets.')
 plt.axis('equal')
 plt.tight_layout()
 plt.show()
-
-
-# In[ ]:
-
-
-
-
